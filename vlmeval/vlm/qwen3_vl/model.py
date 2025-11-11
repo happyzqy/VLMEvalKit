@@ -142,7 +142,7 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
                 tensor_parallel_size=tp_size,
                 enable_expert_parallel=enable_expert_parallel,
                 seed=0,
-                gpu_memory_utilization=kwargs.get("gpu_utils", 0.9),
+                gpu_memory_utilization=kwargs.get("gpu_utils", 0.6),
                 trust_remote_code=True,
             )
         else:

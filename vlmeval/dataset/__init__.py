@@ -77,6 +77,7 @@ from .moat import MOAT
 from .GUI.screenspot import ScreenSpot
 from .GUI.screenspot_v2 import ScreenSpotV2
 from .GUI.screenspot_pro import ScreenSpot_Pro
+from .GUI.aitz import AITZ
 from .mmifeval import MMIFEval
 from .chartmimic import ChartMimic
 from .m4bench import M4Bench
@@ -202,7 +203,7 @@ class ConcatDataset(ImageBaseDataset):
 
 # Add new supported dataset class here
 IMAGE_DATASET = [
-    ImageCaptionDataset, ImageYORNDataset, ImageMCQDataset, ImageVQADataset,
+    AITZ, ImageCaptionDataset, ImageYORNDataset, ImageMCQDataset, ImageVQADataset,
     MathVision, MMMUDataset, OCRBench, MathVista, LLaVABench, LLaVABench_KO, VGRPBench, MMVet,
     MTVQADataset, TableVQABench, MMLongBench, VCRDataset, MMDUDataset, DUDE,
     SlideVQA, MUIRDataset, CCOCRDataset, GMAIMMBenchDataset, MMERealWorld,
