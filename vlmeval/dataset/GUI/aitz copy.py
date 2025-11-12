@@ -21,11 +21,11 @@ Here is the action space:
 3. `SCROLL`: Scroll the screen, choose 'UP' 'DOWN' 'LEFT' 'RIGHT' as your value to indicate the direction you want the view to move.
 4. `PRESS`: Execute a press operation. The value can be 'BACK', 'HOME', or 'ENTER', corresponding to returning to the previous step, navigating to the home screen, or submitting the input, point is not applicable.
 5. `COMPLETE`: Indicate the task is completed, value and point are not applicable.
-I want you to continue executing the instruction `{instruction}`, with the action history being `{history}`, and the current UI screenshot is <image>, .
+I want you to continue executing the instruction `{instruction}`, with the action history being `{history}`, And the current UI screenshot is <image>, .
 Please provide the action to perform (enumerate from ['CLICK', 'TYPE', 'SCROLL', 'PRESS', 'COMPLETE']), the point where the cursor is moved to (integer) if a click is performed, and any text required to complete the action.
 
-Output the thinking process in <think> ... </think> tags, a short summary of what it's about to do at this step in <summarized> ... </summarized>, and the final answer in <answer> </answer> tags as follows:
-<think> ... </think> <summarized> ... </summarized> <answer>[{{'action': enum['CLICK', 'TYPE', 'SCROLL', 'PRESS', 'COMPLETE'], 'point': [x, y], 'value': 'None[default]'}}]</answer>
+Output the thinking process in </think> ... </think> tags, a short summary of what it's about to do at this step in <summarized> ... </summarized>, and the final answer in <answer> </answer> tags as follows:
+</think> ... </think> <summarized> ... </summarized> <answer>[{{'action': enum['CLICK', 'TYPE', 'SCROLL', 'PRESS', 'COMPLETE'], 'point': [x, y], 'value': 'None[default]'}}]</answer>
 If value is not applicable, set it as 'None', If point is not applicable, set it as [-100, -100].
 point represents the relative coordinates on the screenshot and should be scaled to a range of 0-1000.
 Note:
@@ -342,11 +342,11 @@ class AITZ(ImageBaseDataset):
 
         # Build messages in VLMEvalKit format
         msgs = []
-        images_wait=[]
 
         if has_history:
             history_text = line["history"]
             history_images = []
+
             # Extract history images for <image> tags
             # images_list format: [hist1, hist2, ..., hist_n, current]
             # We need the last two history images:倒数第三张 and 倒数第二张
@@ -360,44 +360,36 @@ class AITZ(ImageBaseDataset):
             # Add history images in order (corresponding to <image> tags in history)
             for img_path in history_images:
                 absolute_path = self._get_absolute_image_path(img_path)
-                images_wait.append(absolute_path)
-
+                msgs.append(dict(type="image", value=absolute_path))
+                
             # Add current image first (last image in the sequence)
             current_img_path = line.get("image_path", "")
             if current_img_path:
                 absolute_path = self._get_absolute_image_path(current_img_path)
-                images_wait.append(absolute_path)
+                msgs.append(dict(type="image", value=absolute_path))
             # Use official AITZ template with <image> tags preserved
             user_instruction = AITZ_PROMPT.format(
                 instruction=line["instruction"],
                 history=history_text  # Keep <image> tags in history
             )
-            prompt_split=user_instruction.split('<image>')
-            assert len(prompt_split)-1==len(images_wait)
-            for i in range(len(images_wait)):
-                msgs.append(dict(type="text", value=prompt_split[i]))
-                msgs.append(dict(type="image", value=images_wait[i]))
-            msgs.append(dict(type="text", value=prompt_split[-1]))
 
+            # Add text message
+            msgs.append(dict(type="text", value=user_instruction))
         else:
             # For cases without history
             user_instruction = AITZ_PROMPT.format(
                 instruction=line["instruction"],
                 history=""
             )
-            prompt_split=user_instruction.split('<image>')
+
             # Add current image
             current_img_path = line.get("image_path", "")
             if current_img_path:
                 absolute_path = self._get_absolute_image_path(current_img_path)
-                images_wait.append(absolute_path)
+                msgs.append(dict(type="image", value=absolute_path))
 
-
-            for i in range(len(images_wait)):
-                msgs.append(dict(type="text", value=prompt_split[i]))
-                msgs.append(dict(type="image", value=images_wait[i]))
-            msgs.append(dict(type="text", value=prompt_split[-1]))
-
+            # Add text message
+            msgs.append(dict(type="text", value=user_instruction))
 
         return msgs
 

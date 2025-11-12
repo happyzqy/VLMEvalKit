@@ -312,6 +312,8 @@ api_models = {
     "QwenVLPlus": partial(QwenVLAPI, model="qwen-vl-plus", temperature=0, retry=10),
     "QwenVLMax": partial(QwenVLAPI, model="qwen-vl-max", temperature=0, retry=10),
     "QwenVLMax-250408": partial(QwenVLAPI, model="qwen-vl-max-2025-04-08", temperature=0, retry=10),
+    # "Qwen3-VL-API": partial(GPT4V, model="/disk/zdata1/home/zhangqingyu/download/A_pretrain/qwen3vl_lora_sft_6000-8-2B", temperature=0, retry=10),
+    "Qwen3-VL-API": partial(GPT4V, model="Qwen/Qwen2.5-VL-3B-Instruct", temperature=0, retry=10),
 
     # Reka
     "RekaEdge": partial(Reka, model="reka-edge-20240208"),

@@ -26,6 +26,7 @@ LOCAL_RANK = int(os.environ.get("LOCAL_RANK",1))
 GPU_LIST = get_gpu_list()
 if LOCAL_WORLD_SIZE > 1 and len(GPU_LIST):
     NGPU = len(GPU_LIST)
+    print('NGPU: ',NGPU,'  ','LOCAL_WORLD_SIZE: ',LOCAL_WORLD_SIZE),
     assert NGPU >= LOCAL_WORLD_SIZE, "The number of processes should be less than or equal to the number of GPUs"
     GPU_PER_PROC = NGPU // LOCAL_WORLD_SIZE
     DEVICE_START_IDX = GPU_PER_PROC * LOCAL_RANK
